@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> d;
+void f1(vector<vector<int>> &g,int node,int p,int dis)
+{
+    d[node] = dis;
+    for(auto it :g[node])
+    {
+        if(p == it) continue;
+        f1(g,it,node,dis+1);
+    }
+    return ;
+}
+int treeDistances(int n, vector<vector<int>>edges)
+{
+    vector<vector<int>> g(n+1);
+    for(auto it : edges)
+    {
+        g[it[0]].push_back(it[1]);
+        g[it[1]].push_back(it[0]);
+    }
+    d.resize(n+1,0);
+    f1(g,1,-1,0);
+    int node1=-1,node2 =-1,ma = 0;
+    for(int i = 1;i<=n;i++)
+    {
+        if(ma<d[i])
+        {
+            ma = d[i];
+            node1 = i;
+        }
+    }
+    d.resize(n+1,0);
+    f1(g,node1,-1,0);
+    ma = 0;
+    for(int i = 1;i<=n;i++)
+    {
+        if(ma<d[i])
+        {
+            ma = d[i];
+            node2 = i;
+        }
+    }
+    vector<int> d_node1 = d;
+    d.resize(n+1,0);
+    f1(g,node2,-1,0);
+    vector<int> d_node2 = d;
+    vector<int> ans(n,0);
+    for(int i = 1;i<=n;i++)
+    {
+        ans[i-1] = max(d_node1[i] , d_node2[i]);
+    }
+    return ma;
+}
+int main() {
+    int n;
+    cin >> n;
+    vector<vector<int>> edges;
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        edges.push_back({u, v});
+    }
+    
+    int ans = treeDistances(n, edges);
+    cout<<ans<<endl;
+    return 0;
+}
