@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long 
+
+vector<vector<int>> gr;
+vector<int> cnt_sub;
+int ans;
+int dfs(int node,int p,int d)
+{
+    int cnt = 1;
+    ans += d;
+    for(auto it : gr[node])
+    {
+        if(it!=p)
+        {
+            cnt += dfs(it,node,d+1);
+        }
+    }
+    cnt_sub[node] = cnt;
+    return cnt;
+}
+vector<int> res;
+
+void dfs2(int node,int p)
+{
+    for(auto it : gr[node])
+    {
+        if(it!=p)
+        {
+            res[it] = res[node] - cnt_sub[it] + gr.size()-1 - cnt_sub[it];
+            dfs2(it,node);
+        }
+    }
+}
+int32_t main()
+{
+    int n;
+    cin>>n;
+    gr.resize(n+1);
+    cnt_sub.resize(n+1);
+    ans = 0;
+    for(int i = 0;i<n-1;i++)
+    {
+        int a,b;
+        cin>>a>>b;
+        gr[a].push_back(b);
+        gr[b].push_back(a);
+    }
+    dfs(1,0,0);
+    res.resize(n+1,0);
+    res[1] = ans;
+    dfs2(1,0);
+    for(int i = 1;i<=n;i++)
+    {
+        cout<<res[i]<<" ";
+    }
+    cout<<endl;
+    return 0;
+}
