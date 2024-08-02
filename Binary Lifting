@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+using namespace std;
+ 
+#define ll long long
+vector<vector<int>> gr;
+vector<int> par;
+vector<int> dep;
+vector<vector<int>> binary_lifting;
+
+void dfs(int node,int p,int d)
+{
+    dep[node] = d;
+    par[node] = p;
+    binary_lifting[node][0] = p;
+    for(int i = 1;i<20;i++)
+    {
+    
+        binary_lifting[node][i] = binary_lifting[binary_lifting[node][i-1]][i-1];
+    }
+    for(auto it : gr[node])
+    {
+        if(it != par[node])
+        {
+            dfs(it,node,d+1);
+        }
+    }
+}
+
+int LCA(int a,int b)
+{
+    if(dep[a] < dep[b]) swap(a,b);
+    int diff = dep[a] - dep[b];
+    
+    for(int i = 20;i >=0;i--)
+    {
+        if((diff>>i)&1)
+        {
+            a = binary_lifting[a][i];
+        }
+    }
+    if(a == b) return a;
+
+    for(int i = 20;i>=0;i--)
+    {
+        if(binary_lifting[a][i] != binary_lifting[b][i])
+        {
+            a = binary_lifting[a][i];
+            b = binary_lifting[b][i];
+        }
+    }
+    
+    return binary_lifting[a][0];
+}
+int main() {
+    // read the input
+     ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+   int n,q;
+   cin>>n>>q;
+   gr.resize(n+1);
+   par.resize(n+1);
+   dep.resize(n+1);
+   binary_lifting.resize(n+1,vector<int>(21,0));
+    for(int i = 0;i<n-1;i++)
+    {
+        int x,y;
+        cin>>x>>y;
+        gr[x].push_back(y);
+        gr[y].push_back(x);
+        
+    }
+
+    dfs(1,0,0);
+    while(q--)
+    {
+        int a,b;
+        cin>>a>>b;
+        int ans = LCA(a,b);
+
+        cout<<dep[a]+dep[b]-2*dep[ans]<<endl;
+    }
+    
+   
+    return 0;
+}
