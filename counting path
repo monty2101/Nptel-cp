@@ -1,0 +1,98 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+
+vector<vector<int>> gr;
+vector<vector<int>> par;
+vector<int> dep;
+vector<int> val;
+
+void dfs(int node,int p,int d)
+{
+    dep[node] = d;
+    par[node][0] = p;
+    for(int i=1;i<20;i++)
+    {
+        par[node][i] = par[par[node][i-1]][i-1];
+    }
+    for(auto x:gr[node])
+    {
+        if(x!=p)
+        {
+            dfs(x,node,d+1);
+        }
+    }
+}
+
+int LCA(int a,int b)
+{
+    if(dep[a]<dep[b]) swap(a,b);
+    int diff = dep[a]-dep[b];
+    for(int j=19;j>=0;j--)
+    {
+        if((diff>>j)&1)
+        {
+            a = par[a][j];
+        }
+    }
+    if(a==b) return a;
+    for(int j=19;j>=0;j--)
+    {
+        if(par[a][j]!=par[b][j])
+        {
+            a = par[a][j];
+            b = par[b][j];
+        }
+    }
+    return par[a][0];
+}
+
+void dfs2(int node,int p)
+{
+    int cnt = 0;
+    for(auto x : gr[node])
+    {
+        if(x!=p)
+        {
+            dfs2(x,node);
+            cnt += val[x];
+        }
+    }
+    val[node] += cnt;
+    return ;
+}
+int main() {
+    // read the input
+     ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,m;
+    cin>>n>>m;
+    gr.resize(n+1);
+    par.resize(n+1,vector<int>(22,0));
+    dep.resize(n+1,0);
+    val.resize(n+1,0);
+    for(int i=1;i<n;i++){
+        int a,b;
+        cin>>a>>b;
+        gr[a].push_back(b);
+        gr[b].push_back(a);
+    }
+    dfs(1,0,0);
+
+    for(int i=1;i<=m;i++)
+    {
+        int a,b;
+        cin>>a>>b;
+        val[a] += 1;
+        val[b] += 1;
+        int lca = LCA(a,b);
+        val[lca] -= 1;
+        val[par[lca][0]] -= 1;
+    }
+    dfs2(1,0);
+    for(int i=1;i<=n;i++)
+    {
+        cout<<val[i]<<" ";
+    }
+    return 0;
+}
