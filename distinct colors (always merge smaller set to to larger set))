@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+
+vector<vector<int>> gr;
+vector<int> color;
+vector<int> ans;
+
+set<int> dfs(int node, int par) {
+    set<int> curr;
+    curr.insert(color[node]);
+    for (int child : gr[node]) {
+        if (child == par) continue;
+        set<int> ch = dfs(child, node);
+        if(ch.size()>curr.size()) swap(ch,curr);
+        for(auto it : ch)
+        {
+            curr.insert(it);
+        }
+    }
+    ans[node] = curr.size();
+    return curr;
+}
+int main() {
+    // read the input
+     ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n;
+    cin>>n;
+    gr.resize(n+1);
+    color.resize(n+1,0);
+    ans.resize(n+1,0);
+    for(int i = 1;i<=n;i++)
+    {
+        cin>>color[i];
+    }
+    for(int i=0;i<n-1;i++){
+        int u,v;
+        cin>>u>>v;
+        gr[u].push_back(v);
+        gr[v].push_back(u);
+    }
+    dfs(1,0);
+    for(int i=1;i<=n;i++)
+    {
+        cout<<ans[i]<<" ";
+    }
+    return 0;
+}
