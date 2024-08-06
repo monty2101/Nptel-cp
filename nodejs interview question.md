@@ -124,6 +124,7 @@ This is how Node manages concurrency.
 
 **Answer:**
 The asynchronous function requires callbacks as a return parameter. When multiple asynchronous functions are chained together then callback hell situation comes up. 
+Callback hell is a phenomenon that happens when multiple callbacks are nested on top of each other. The two common ways of escaping the callback heare are by using promises and async/await. Promises mainly have three stages such as resolved, rejected, and pending. It makes the code more maintainable and understandable.
 
 **Source:** _codeforgeek.com_
 ### Q14: Could we run an external process with Node.js? ☆☆
