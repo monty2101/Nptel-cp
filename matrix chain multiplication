@@ -1,0 +1,44 @@
+// Online C++ compiler to run C++ program online
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+
+vector<vector<int>> dp;
+vector<int> pref;
+int prefix_sum(int s,int e)
+{
+    return pref[e+1]-pref[s];
+}
+int x(vector<int> &v,int s,int e)
+{
+    if(s == e) return 0;
+    if(dp[s][e] != -1) return dp[s][e];
+    int ans = 1e14;
+    int sum = prefix_sum(s,e);
+        
+    for(int i = s+1;i<=e;i++)
+    {
+        ans = min(x(v,s,i-1)+x(v,i,e),ans);
+    }
+    return dp[s][e] = ans+sum;
+}
+int32_t main() {
+    // Write C++ code here
+    int n;
+    cin>>n;
+    vector<int> v(n,0);
+    dp.resize(n+1,vector<int>(n+1,-1));
+    for(int i = 0;i<n;i++) cin>>v[i];
+    
+    int sum = 0;
+    pref.push_back(0);
+    for(auto it : v){ 
+        sum += it;
+        pref.push_back(sum);
+    }
+    cout<<x(v,0,n-1)<<endl;
+    
+    
+
+    return 0;
+}
