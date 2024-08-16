@@ -1,0 +1,43 @@
+#include <bits/stdc++.h> 
+using namespace std;
+#define int long long
+vector<vector<int>> g;
+vector<vector<int>> dp;
+int mod = 1e9+7;
+int dfs(int node,int p,int c)
+{ 
+    if(dp[node][c] != -1)
+    {
+        return dp[node][c];
+    }
+    int ans = 1;
+    for(auto it : g[node])
+    {
+        if(it != p)
+        {
+            if(c == 1)
+            {
+               ans *= dfs(it,node,1)+dfs(it,node,0);
+            }else{
+                ans *= dfs(it,node,1);
+            }
+                ans %= mod;
+        }
+    }
+    return dp[node][c] = ans%mod;
+}
+int32_t main(){
+    int n;
+    cin>>n;
+    g.resize(n+1);
+    dp.resize(n+1,vector<int>(2,-1));
+    for(int i = 0;i<n-1;i++)
+    {
+        int a,b;
+        cin>>a>>b;
+        g[a].push_back(b);
+        g[b].push_back(a);
+    }
+    cout<<(dfs(1,-1,1)+dfs(1,-1,0))%mod<<endl;
+    return 0;
+}
